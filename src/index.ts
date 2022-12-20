@@ -1,7 +1,8 @@
-import {AnyThreadChannel, Client, IntentsBitField} from 'discord.js';
+import {AnyThreadChannel, Client, IntentsBitField, TextChannel} from 'discord.js';
 import * as path from "path";
 import {getEnabledGame} from "./Cache/cachedGames";
 import {listen} from "./CapturePoints/Listener";
+import {getUserPoints, setUserPoints} from "./CapturePoints/PointValidator";
 const {Flags} = IntentsBitField;
 
 require('dotenv').config({
@@ -13,13 +14,15 @@ const client = new Client({
 
 client.on('messageCreate', async msg => {
     if(msg.content !== "!test") return;
-    if(!msg.channel.isThread()) return;
-
-    await msg.delete();
-    console.log(msg.channel.isThread)
+    if(!(await getEnabledGame()).enabled) return;
+    //
+    //
 })
 listen(client);
-client.login(process.env._TOKEN);
+const test = async () => {
+}
+test();
+client.login(process.env._TOKEN).then( () => console.log("I am ready"));
 
 
 

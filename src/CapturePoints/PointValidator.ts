@@ -32,30 +32,41 @@ export const messageCreatePoint = async (message: Message) => {
 
     if (message.member?.roles.cache.some(role => enabledGame.roleIds.includes(role.id))) return; //no points for themselves 💀
 
-    const originalMessageMember = (await thread.fetchStarterMessage())?.member;
+    let originalMessageMember;
+    if(channel.id === "1049916451974287381") {
+        //looking for hey kaibear channel
+        originalMessageMember = (await thread.fetchStarterMessage())?.content
+            .replace("/[<@>]/g", "");
+    }else{
+       originalMessageMember = (await thread.fetchStarterMessage())?.member;
+    }
+
     if (!(originalMessageMember === message.member)) return; //if it's not the original message creator, GO BACK ☠☠
 
     const bonusPoint = await rate(await findLastPlayerMessage(thread, player.id));
 
     if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
 
-    incrementPoints(enabledGame.pointsPerMessage, player.id, bonusPoint);
+    await incrementPoints(enabledGame.pointsPerMessage, player.id, enabledGame, bonusPoint);
 }
 
 
-const incrementPoints = (points: number, userId: string, bonus?: number) => {
+const incrementPoints = async (points: number, userId: string, game:game, bonus?: number ) => {
     console.log({
         points: points,
         userId: userId,
         bonus: bonus
     })
-
-
+    const beforePoints = await getUserPoints(userId, game);
+    if(bonus === undefined) bonus = 0;
+    const toSetPoints  = beforePoints + points + bonus;
+    await setUserPoints(userId, toSetPoints, game);
+    console.log(pointsTableCache)
 }
 export const pointsTableCache = new Map<string, number>();
 
 
-const getUserPoints = async (userId: string, game: game): Promise<number> => {
+export const getUserPoints = async (userId: string, game: game): Promise<number> => {
     let result = 0;
     const cachedUser = pointsTableCache.get(userId);
     if (cachedUser !== undefined) {
@@ -74,14 +85,14 @@ const getUserPoints = async (userId: string, game: game): Promise<number> => {
                 pointsTableCache.set(user.userId, user.points)
             })
         }else{
-            await setUserPoints(userId, 0, await getEnabledGame())
+            await setUserPoints(userId, 0, game)
             result = 0;
         }
     }
     return Promise.resolve(result);
 }
 
-const setUserPoints = async (userId: string, points: number, game:game) => {
+export const setUserPoints = async (userId: string, points: number, game:game) => {
     pointsTableCache.set(userId, points)
    await fetch(`http://${API_URL}/api/v1/points?name=${game.name}&userId=${userId}&points=${points}`, {
         headers: {
