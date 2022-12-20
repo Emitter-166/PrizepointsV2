@@ -1,5 +1,6 @@
 import * as Buffer from "buffer";
 import * as path from "path";
+import {API_URL} from "../index";
 
 let updatedAt:number;
 let cachedEnabledGame:game = {
@@ -12,7 +13,6 @@ let cachedEnabledGame:game = {
     pointsPerThreadCreation: 0
 };
 const buf =  Buffer.Buffer;
-const API_URL = "localhost:3000";
 
 require('dotenv').config({
     path: path.join(__dirname, ".env")

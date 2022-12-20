@@ -1,10 +1,9 @@
-import {AnyThreadChannel, Client, IntentsBitField, TextChannel} from 'discord.js';
+import {Client, IntentsBitField} from 'discord.js';
 import * as path from "path";
 import {getEnabledGame} from "./Cache/cachedGames";
 import {listen} from "./CapturePoints/Listener";
-import {getUserPoints, setUserPoints} from "./CapturePoints/PointValidator";
 const {Flags} = IntentsBitField;
-
+export const API_URL = "localhost:3000";
 require('dotenv').config({
     path: path.join(__dirname, ".env")
 });
