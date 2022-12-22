@@ -3,7 +3,7 @@ import * as path from "path";
 import {API_URL} from "../index";
 
 let updatedAt:number;
-let cachedEnabledGame:game = {
+export let cachedEnabledGame:game = {
     id: 0,
     name: '',
     enabled: false,
