@@ -12,13 +12,18 @@ export const createGame = async (name: string): Promise<boolean> => {
 }
 
 export const changeGameStatus = async (name: string, enabled: boolean): Promise<boolean> => {
-    await fetch(`http://${API_URL}/api/v1/games/update?name=${name}&enabled=${enabled}`, {
+    const response = await fetch(`http://${API_URL}/api/v1/games/update?name=${name}&enabled=${enabled}`, {
         method: "POST",
         headers: {
             "Authorization": "Basic " + process.env._AUTH_TOKEN
         }
     });
-    return Promise.resolve(true);
+    const data = await response.json();
+
+    if (data.message === "Game created")
+        return Promise.resolve(false)
+    else
+        return Promise.resolve(true);
 }
 
 export const changeGameConfig = async (name: string, attributes: "channels" | "roles" | "rewards", addOrRemove: "add" | "remove", data: string[]): Promise<boolean> => {
@@ -86,16 +91,16 @@ export const changeGameConfig = async (name: string, attributes: "channels" | "r
         case "channels":
             let channelString: string = "";
             if (addOrRemove === "add") {
-                game.channelIds.split(" ").forEach(channel=> {
-                    channelString = channelString + channel+ " "
+                game.channelIds.split(" ").forEach(channel => {
+                    channelString = channelString + channel + " "
                 });
-                data.forEach(channel=> {
-                    channelString = channelString + channel+ " ";
+                data.forEach(channel => {
+                    channelString = channelString + channel + " ";
                 })
             } else {
-                game.channelIds.split(" ").forEach(channel=> {
+                game.channelIds.split(" ").forEach(channel => {
                     if (!(data.some(element => element === channel))) {
-                        channelString = channelString + channel+ " "
+                        channelString = channelString + channel + " "
                     }
                 })
             }
