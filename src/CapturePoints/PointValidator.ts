@@ -1,6 +1,5 @@
 import {GuildMember, Message, AnyThreadChannel} from "discord.js";
 import {getEnabledGame} from "../Cache/cachedGames";
-import * as path from "path";
 import {findLastPlayerMessage, incrementPoints, rate, threadPointsLimitReached} from "./APIOperations";
 /*
 you get points when:

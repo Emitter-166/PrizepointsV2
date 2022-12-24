@@ -1,6 +1,6 @@
 import {EmbedBuilder, Message, PermissionsBitField} from "discord.js";
 import {COMMAND_PREFIX} from "../index";
-import {changeGameConfig, createGame} from "./APIOperation";
+
 import {
     addChannels,
     addRoles,

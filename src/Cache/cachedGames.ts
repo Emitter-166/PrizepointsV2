@@ -1,7 +1,6 @@
 import * as Buffer from "buffer";
 import * as path from "path";
 import {API_URL} from "../index";
-
 let updatedAt:number;
 export let cachedEnabledGame:game = {
     id: 0,
@@ -26,7 +25,7 @@ export const getEnabledGame = async ():Promise<game>=> {
                 'Authorization': 'Basic ' + process.env._AUTH_TOKEN
             }
         }));
-        const data = await response.json();
+        const data:any = await response.json();
 
         if(response.status === 400){
             cachedEnabledGame = {
@@ -49,7 +48,7 @@ export const getEnabledGame = async ():Promise<game>=> {
                 'Authorization': 'Basic ' + process.env._AUTH_TOKEN
             }
         })
-        const data = await response.json();
+        const data:any = await response.json();
 
         if(!Boolean(data.valid)){
             const response = await fetch(`http://${API_URL}/api/v1/games?enabled=true`, {
@@ -58,7 +57,7 @@ export const getEnabledGame = async ():Promise<game>=> {
                     'Authorization': 'Basic ' + process.env._AUTH_TOKEN
                 }
             });
-            const data = await response.json();
+            const data:any = await response.json();
             if(response.status === 400){
                 cachedEnabledGame = {
                     id: 0,

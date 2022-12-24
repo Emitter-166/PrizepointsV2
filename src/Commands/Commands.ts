@@ -5,6 +5,7 @@ import * as fs from "fs";
 import {pointsTableCache} from "../CapturePoints/APIOperations";
 import {getEnabledGame} from "../Cache/cachedGames";
 
+
 export const create = async (msg: Message) => {
     const args = msg.content.split(" ");
     if (args.length !== 3) {
@@ -246,7 +247,7 @@ export const showGames = async (msg: Message) => {
             "Authorization": "Basic " + process.env._AUTH_TOKEN
         }
     });
-    const games: game[] = await response.json();
+    const games: game[] = await response.json() as any;
     games.forEach(game => {
         const name = game.name;
         const id = game.id;
@@ -340,7 +341,7 @@ export const createLeaderboard = async (name: string, custom?: {userId: string, 
                 'Authorization': 'Basic ' + process.env._AUTH_TOKEN
             }
         }));
-        const data = await response.json();
+        const data:any = await response.json();
         if (response.status === 400) {
             return Promise.resolve({text: "Game not found", colour: generateRandomLightHexColor()});
         }

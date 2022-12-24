@@ -8,7 +8,7 @@ export const createGame = async (name: string): Promise<boolean> => {
             "Authorization": "Basic " + process.env._AUTH_TOKEN
         }
     });
-    return Promise.resolve((await response.json()).message === "Game created")
+    return Promise.resolve((await response.json() as any).message === "Game created")
 }
 
 export const changeGameStatus = async (name: string, enabled: boolean): Promise<boolean> => {
@@ -18,7 +18,7 @@ export const changeGameStatus = async (name: string, enabled: boolean): Promise<
             "Authorization": "Basic " + process.env._AUTH_TOKEN
         }
     });
-    const data = await response.json();
+    const data:any = await response.json();
 
     if (data.message === "Game created")
         return Promise.resolve(false)
@@ -39,7 +39,7 @@ export const changeGameConfig = async (name: string, attributes: "channels" | "r
         });
         if (response.status === 400) return Promise.resolve(false);
 
-        const data = await response.json();
+        const data:any = await response.json();
         game = data.returnData.model as game;
     }
 
