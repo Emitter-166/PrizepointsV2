@@ -1,12 +1,14 @@
 import {AnyThreadChannel} from "discord.js";
 import {getEnabledGame} from "../Cache/cachedGames";
 import {API_URL} from "../index";
+import {updateLeaderboard} from "../Commands/Commands";
 
 export const incrementPoints = async (points: number, userId: string, game:game, bonus?: number ) => {
     console.log({userId, points, bonus})
     const beforePoints = await getUserPoints(userId, game);
     if(bonus === undefined) bonus = 0;
     const toSetPoints  = beforePoints + points + bonus;
+    updateLeaderboard(game.name, userId, points + bonus);
     await setUserPoints(userId, toSetPoints, game);
 }
 export const pointsTableCache = new Map<string, number>();
@@ -39,6 +41,7 @@ export const getUserPoints = async (userId: string, game: game): Promise<number>
 }
 
 export const setUserPoints = async (userId: string, points: number, game:game) => {
+    points = Math.floor(points);
     pointsTableCache.set(userId, points)
     await fetch(`http://${API_URL}/api/v1/points?name=${game.name}&userId=${userId}&points=${points}`, {
         headers: {
