@@ -6,7 +6,7 @@ import {changeGameConfig, changeGameStatus, createGame} from "./Commands/APIOper
 import {listenForCommands} from "./Commands/Listener";
 import {createLeaderboard, showGames} from "./Commands/Commands";
 const {Flags} = IntentsBitField;
-export const API_URL = "localhost:3000";
+export const API_URL = "localhost:3473";
 export const COMMAND_PREFIX = "!pp";
 
 require('dotenv').config({

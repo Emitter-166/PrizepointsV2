@@ -66,7 +66,7 @@ export const findLastPlayerMessage = async (thread: AnyThreadChannel, userId: st
 }
 
 export const rate = async (msg: string): Promise<number> => {
-    const response = await (await fetch(`http://209.126.86.43:1010/?message=${msg}`)).json();
+    const response = await (await fetch(`http://localhost:1010/?message=${msg}`)).json();
     return Promise.resolve(response.rating as number);
 }
 
