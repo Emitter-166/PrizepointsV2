@@ -8,7 +8,7 @@ export const incrementPoints = async (points: number, userId: string, game:game,
     const beforePoints = await getUserPoints(userId, game);
     if(bonus === undefined) bonus = 0;
     const toSetPoints  = beforePoints + points + bonus;
-    updateLeaderboard(game.name, userId, points + bonus);
+    updateLeaderboard(game.name, userId, Math.round(points + bonus));
     await setUserPoints(userId, toSetPoints, game);
 }
 export const pointsTableCache = new Map<string, number>();
