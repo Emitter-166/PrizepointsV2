@@ -1,4 +1,4 @@
-import {ColorResolvable, EmbedBuilder, Message} from "discord.js";
+import {ColorResolvable, EmbedBuilder, Message, PermissionsBitField} from "discord.js";
 import {changeGameConfig, changeGameStatus, createGame} from "./APIOperation";
 import {API_URL, client} from "../index";
 import * as fs from "fs";
@@ -281,36 +281,57 @@ export const sendLeaderboard = async (msg: Message) => {
     const args = msg.content.split(" ");
     let name = args[1];
 
-    let game = await getEnabledGame();
-    if (name === undefined) name = game.name;
+    let higherStaff = false
+    const commandExecutor = msg.member;
+    if((commandExecutor?.roles.cache.has("989322114735693858") ||
+        commandExecutor?.permissions.has(PermissionsBitField.resolve('Administrator')))) higherStaff = true;
+
+    let enabledGame = await getEnabledGame();
+    if (name === undefined) name = enabledGame.name;
+
 
     const leaderboard = await createLeaderboard(name);
     let time = (new Date()).getTime().toString();
     time = time.substring(0, time.length - 3);
 
+
+
     const embed = new EmbedBuilder()
         .setTitle(name)
         .setColor(leaderboard.colour as ColorResolvable)
         .setThumbnail("https://cdn.discordapp.com/attachments/984688947756138507/1056183205071421490/b940028e380640c7d03b26aecce9953a.jpg")
-        .setDescription(leaderboard.text)
-        .addFields({name: "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", value: "ㅤ"}, {
-            name: "Live score <a:ut_live:1056282055580864552>",
-            value: `updated <t:${time}:R>`
-        });
+        .setDescription(leaderboard.text);
 
 
+    if(higherStaff){
+        if(name === enabledGame.name){
+            embed.addFields({name: "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", value: "ㅤ"}, {
+                name: "Live score <a:ut_live:1056282055580864552>",
+                value: `updated <t:${time}:R>`
+            });
 
-    if (message) {
-        const embed = message.embeds[0];
-        const newEmbed = new EmbedBuilder()
-            .setColor(embed.color)
-            .setTitle(embed.title)
-            .setThumbnail(embed.thumbnail?.url as string)
-            .setDescription(embed.description);
-        await message.edit({embeds: [newEmbed]});
+            if (message) {
+                const embed = message.embeds[0];
+                const newEmbed = new EmbedBuilder()
+                    .setColor(embed.color)
+                    .setTitle(embed.title)
+                    .setThumbnail(embed.thumbnail?.url as string)
+                    .setDescription(embed.description);
+                await message.edit({embeds: [newEmbed]});
+            }
+            message = await msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
+        }else{
+            msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
+        }
+    }else{
+        if(!message){
+            embed.addFields({name: "Live score 🔴 (disabled)", value: "Check <#1056504674150269018> or ask <@765190140887957534> for a **live leaderboard**"});
+            msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
+        }else{
+            embed.addFields({name: "Live score 🔴 (disabled)", value: `Check https://discord.com/channels/859736561830592522/${message.channel.id}/${message.id}`});
+            msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
+        }
     }
-    message = await msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
-
 }
 
 export let message: Message;
