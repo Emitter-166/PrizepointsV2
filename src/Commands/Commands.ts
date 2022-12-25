@@ -280,7 +280,9 @@ export const showGames = async (msg: Message) => {
 export const sendLeaderboard = async (msg: Message) => {
     const args = msg.content.split(" ");
     let name = args[1];
-    if (name === undefined) name = (await getEnabledGame()).name;
+
+    let game = await getEnabledGame();
+    if (name === undefined) name = game.name;
 
     const leaderboard = await createLeaderboard(name);
     let time = (new Date()).getTime().toString();
@@ -296,6 +298,8 @@ export const sendLeaderboard = async (msg: Message) => {
             value: `updated <t:${time}:R>`
         });
 
+
+
     if (message) {
         const embed = message.embeds[0];
         const newEmbed = new EmbedBuilder()
@@ -306,9 +310,10 @@ export const sendLeaderboard = async (msg: Message) => {
         await message.edit({embeds: [newEmbed]});
     }
     message = await msg.reply({embeds: [embed], allowedMentions: {repliedUser: false}})
+
 }
 
-let message: Message;
+export let message: Message;
 
 export const updateLeaderboard = async (name: string, userId: string, added: number) => {
     if (!message) return;
