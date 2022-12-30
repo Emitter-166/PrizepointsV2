@@ -53,8 +53,7 @@ export const setUserPoints = async (userId: string, points: number, game:game) =
 export const findLastPlayerMessage = async (thread: AnyThreadChannel, userId: string): Promise<string> => {
     let game = await getEnabledGame();
     if (!game.enabled) return Promise.resolve("");
-
-    const messages = await thread.messages.fetch({limit: 100})
+    const messages = await (await thread.fetch()).messages.fetch({limit: 100})
     for (const msg of messages) {
         if (msg[1].member !== null) {
             if (msg[1].member.user.id === userId) {

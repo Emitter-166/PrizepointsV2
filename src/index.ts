@@ -1,4 +1,4 @@
-import {Client, IntentsBitField, Message, PermissionsBitField, Role, TextChannel} from 'discord.js';
+import {Client, GuildMember, IntentsBitField, Message, PermissionsBitField, Role, TextChannel} from 'discord.js';
 import * as path from "path";
 import {listen} from "./CapturePoints/Listener";
 import {listenForCommands} from "./Commands/Listener";
@@ -21,7 +21,6 @@ listenForCommands(client);
 const test = async () => {
     // await showGames();
 }
-test();
 
 client.once('ready', async () => {
     console.log("ready")

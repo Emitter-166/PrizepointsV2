@@ -352,7 +352,12 @@ export const updateLeaderboard = async (name: string, userId: string, added: num
             name: "Live score <a:ut_live:1056282055580864552>",
             value: `updated <t:${time}:R>`
         });
-    await message.edit({embeds: [embed]});
+    try{
+        await message.edit({embeds: [embed]});
+    }catch (err){
+        console.log(err);
+        return
+    }
 }
 
 export const createLeaderboard = async (name: string, custom?: {userId: string, added: number}): Promise<{ text: string, colour: string }> => {

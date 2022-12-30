@@ -24,7 +24,8 @@ export const changeGameConfigCommand = async (msg: Message) => {
     }
     const commandExecutor = msg.member;
     if(!(commandExecutor?.roles.cache.has("989322114735693858") ||
-        commandExecutor?.permissions.has(PermissionsBitField.resolve('Administrator')))) return;
+        commandExecutor?.permissions.has(PermissionsBitField.resolve('Administrator')) ||
+        commandExecutor?.roles.cache.has("1056157919000940687"))) return;
 
 
     if(args[1] === "help"){
