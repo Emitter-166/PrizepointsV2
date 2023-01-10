@@ -287,7 +287,7 @@ export const sendLeaderboard = async (msg: Message) => {
         commandExecutor?.permissions.has(PermissionsBitField.resolve('Administrator')))) higherStaff = true;
 
     let enabledGame = await getEnabledGame();
-    if (name === undefined) name = enabledGame.name;
+    if (name === undefined || name=== '') name = enabledGame.name;
 
 
     const leaderboard = await createLeaderboard(name);

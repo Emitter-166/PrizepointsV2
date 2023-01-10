@@ -11,12 +11,18 @@ export const incrementPoints = async (points: number, userId: string, game:game,
     updateLeaderboard(game.name, userId, Math.round(points + bonus));
     await setUserPoints(userId, toSetPoints, game);
 }
-export const pointsTableCache = new Map<string, number>();
-
+export let pointsTableCache = new Map<string, number>();
+export let runningGame = "";
 
 export const getUserPoints = async (userId: string, game: game): Promise<number> => {
     let result = 0;
+    if(runningGame !== game.name){
+        pointsTableCache = new Map<string, number>();
+    }
+    runningGame = game.name;
+
     const cachedUser = pointsTableCache.get(userId);
+
     if (cachedUser !== undefined) {
         result = cachedUser;
     } else {
