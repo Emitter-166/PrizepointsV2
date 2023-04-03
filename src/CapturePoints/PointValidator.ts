@@ -49,24 +49,15 @@ export const messageCreatePoint = async (message: Message) => {
             }
         }
 
-        if(channel.type === 15){
-            const forum_player = message.member;
-            if(!forum_player) return;
-
-            const bonusPoints = await rate(await findLastPlayerMessage(thread, forum_player.id));
-
-            await incrementPoints(enabledGame.pointsPerMessage, forum_player.id, enabledGame, bonusPoints);
-            return;
-            
-        }else{
-            if (!(originalMessageMember === message.member?.id)) return; //if it's not the original message creator, GO BACK ☠☠
+            if(channel.type !== 15)
+                if (!(originalMessageMember === message.member?.id)) return; //if it's not the original message creator, GO BACK ☠☠
 
             const bonusPoints = await rate(await findLastPlayerMessage(thread, player.id));
 
-            if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
+            if(channel.type !== 15)
+                if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
 
             await incrementPoints(enabledGame.pointsPerMessage, player.id, enabledGame, bonusPoints);
-        }
 
     }
     
