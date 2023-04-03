@@ -52,7 +52,10 @@ export const messageCreatePoint = async (message: Message) => {
             if(channel.type !== 15)
                 if (!(originalMessageMember === message.member?.id)) return; //if it's not the original message creator, GO BACK ☠☠
 
-            const bonusPoints = await rate(await findLastPlayerMessage(thread, player.id));
+            let bonusPoints = await rate(await findLastPlayerMessage(thread, player.id));
+
+            if(channel.type === 15)
+                bonusPoints = await rate(message.content);
 
             if(channel.type !== 15)
                 if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
