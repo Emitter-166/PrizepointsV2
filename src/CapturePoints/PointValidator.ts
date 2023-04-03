@@ -1,4 +1,4 @@
-import {GuildMember, Message, AnyThreadChannel} from "discord.js";
+import {GuildMember, Message, AnyThreadChannel, ForumChannel} from "discord.js";
 import {getEnabledGame} from "../Cache/cachedGames";
 import {findLastPlayerMessage, incrementPoints, rate, threadPointsLimitReached} from "./APIOperations";
 /*
@@ -11,7 +11,9 @@ you get points when:
 
 export const messageCreatePoint = async (message: Message) => {
     try {
-        if (!message.channel.isThread()) return;
+
+        if (message.channel.isThread()){
+
         const thread = message.channel as AnyThreadChannel;
         const channel = thread.parent;
 
@@ -24,6 +26,7 @@ export const messageCreatePoint = async (message: Message) => {
 
         const player: GuildMember | null | undefined = (await thread.fetchOwner())?.guildMember;
         if (player === null || player === undefined) return;
+
         if (!enabledGame.roleIds.split(" ").some(roleId => player.roles.cache.has(roleId))) return; //role check
 
         if (message.member?.roles.cache.some(role => enabledGame.roleIds.includes(role.id))) return; //no points for themselves 💀
@@ -42,13 +45,27 @@ export const messageCreatePoint = async (message: Message) => {
             }
         }
 
-        if (!(originalMessageMember === message.member?.id)) return; //if it's not the original message creator, GO BACK ☠☠
+        if(channel.type === 15){
+            const forum_player = message.member;
+            if(!forum_player) return;
 
-        const bonusPoints = await rate(await findLastPlayerMessage(thread, player.id));
+            const bonusPoints = await rate(await findLastPlayerMessage(thread, forum_player.id));
 
-        if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
+            await incrementPoints(enabledGame.pointsPerMessage, forum_player.id, enabledGame, bonusPoints);
+            return;
+            
+        }else{
+            if (!(originalMessageMember === message.member?.id)) return; //if it's not the original message creator, GO BACK ☠☠
 
-        await incrementPoints(enabledGame.pointsPerMessage, player.id, enabledGame, bonusPoints);
+            const bonusPoints = await rate(await findLastPlayerMessage(thread, player.id));
+
+            if ((await threadPointsLimitReached(thread.id, enabledGame.pointsPerMessage))) return;
+
+            await incrementPoints(enabledGame.pointsPerMessage, player.id, enabledGame, bonusPoints);
+        }
+
+    }
+    
     } catch (err) {
         console.log(err);
         return
@@ -61,6 +78,9 @@ export const threadCreatePoints = async (thread: AnyThreadChannel) => {
         if (!enabledGame.enabled) return;
 
         const channel = await thread.parent;
+
+        if(channel?.type === 15) return;
+        
         if (!enabledGame.channelIds.includes(channel?.id as string)) return;
 
         const player: GuildMember | null | undefined = (await thread.fetchOwner())?.guildMember;

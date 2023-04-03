@@ -282,19 +282,18 @@ export const sendLeaderboard = async (msg: Message) => {
     let name = args[1];
 
     let higherStaff = false
+    
     const commandExecutor = msg.member;
     if((commandExecutor?.roles.cache.has("989322114735693858") ||
         commandExecutor?.permissions.has(PermissionsBitField.resolve('Administrator')))) higherStaff = true;
 
     let enabledGame = await getEnabledGame();
-    if (name === undefined || name=== '') name = enabledGame.name;
+    if (name === undefined) name = enabledGame.name;
 
 
     const leaderboard = await createLeaderboard(name);
     let time = (new Date()).getTime().toString();
     time = time.substring(0, time.length - 3);
-
-
 
     const embed = new EmbedBuilder()
         .setTitle(name)
@@ -361,6 +360,7 @@ export const updateLeaderboard = async (name: string, userId: string, added: num
 }
 
 export const createLeaderboard = async (name: string, custom?: {userId: string, added: number}): Promise<{ text: string, colour: string }> => {
+    if(name === '') return Promise.resolve({text: "no games found", colour: generateRandomLightHexColor()});
 
     let arr: [string, number][] = [];
     if ((await getEnabledGame()).name === name && pointsTableCache.size > 0) {
