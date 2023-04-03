@@ -24,12 +24,16 @@ export const messageCreatePoint = async (message: Message) => {
         if (channel === null) return;
         if (!enabledGame.channelIds.includes(channel.id)) return; //channel check
 
-        const player: GuildMember | null | undefined = (await thread.fetchOwner())?.guildMember;
+        let player: GuildMember | null | undefined = (await thread.fetchOwner())?.guildMember;
+
+        if(channel.type === 15) player = message.member;
+
         if (player === null || player === undefined) return;
 
-        if (!enabledGame.roleIds.split(" ").some(roleId => player.roles.cache.has(roleId))) return; //role check
-
-        if (message.member?.roles.cache.some(role => enabledGame.roleIds.includes(role.id))) return; //no points for themselves 💀
+        if (!enabledGame.roleIds.split(" ").some(roleId => player?.roles.cache.has(roleId))) return; //role check
+        
+        if(channel.type !== 15)
+            if (message.member?.roles.cache.some(role => enabledGame.roleIds.includes(role.id))) return; //no points for themselves 💀
 
         let originalMessageMember: string;
         if (channel.id === "1049916451974287381") {
@@ -80,7 +84,7 @@ export const threadCreatePoints = async (thread: AnyThreadChannel) => {
         const channel = await thread.parent;
 
         if(channel?.type === 15) return;
-        
+
         if (!enabledGame.channelIds.includes(channel?.id as string)) return;
 
         const player: GuildMember | null | undefined = (await thread.fetchOwner())?.guildMember;
