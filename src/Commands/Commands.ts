@@ -78,6 +78,8 @@ export const disable = async (msg: Message) => {
                 "Game not found! So a game was created.```");
         await msg.reply({embeds: [success]});
     }
+
+    process.exit();
 }
 
 export const addRoles = async (msg: Message) => {
